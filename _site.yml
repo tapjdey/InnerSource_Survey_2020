@@ -1,0 +1,13 @@
+name: "survey-result"
+navbar:
+  title: "Survey Result"
+  left:
+    - text: "Home"
+      href: Index.html
+    - text: "Respondant Profile"
+      icon: fa-id-card
+      href: Profile.html
+output:
+  html_document:
+    theme: cosmo
+    highlight: textmate
