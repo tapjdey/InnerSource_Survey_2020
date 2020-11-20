@@ -74,6 +74,7 @@ sudata = data.frame(lapply(sudata, trimws))
 
 # **Survey Objectives**
 
+
 Open Source has been a successful model for software development, with over 135M Open Source projects in existence and over 47M developers contributing to them   ([source: World of Code Dataset summary](https://bitbucket.org/swsc/overview/src/master/README.md)) across various platforms like GitHub, BitBucket, GitLab etc., and it 
 continues to play an important role in the software industry, not only
 because of the high quality open source software products many of their products rely on, but also
