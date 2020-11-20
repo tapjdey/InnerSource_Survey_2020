@@ -6,7 +6,7 @@ navbar:
   left:
     - text: "Summary"
       icon: fa-newspaper
-      href: Index.html
+      href: index.html
     - text: "Demographics"
       menu:
       - text: "Respondants' Profile"
