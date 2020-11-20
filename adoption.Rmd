@@ -1,0 +1,277 @@
+---
+title: "InnerSource Adoption at the Organizations"
+output: html_document
+---
+
+<style type="text/css">
+.main-container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 150%;
+}
+</style>
+
+```{r setup, prep, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(ggplot2)
+library(maps)
+library(hrbrthemes)
+library(viridis)
+library(scales)
+library(stringr)
+library(ggthemr)
+library(RColorBrewer)
+library(egg)
+library(dplyr)
+require(scales)
+library(likert)
+library(plyr)
+
+myPalette <- brewer.pal(5, "Set2") 
+ggthemr("grape") 
+
+# For processing multiple answer data
+process.mad = function(x){
+  x = x[!(is.na(x))]
+  x = unlist(x)
+  x = paste(x,',')
+  x = unlist(strsplit(x,','))
+  x = trimws(x)
+  x = x[x != ""]
+
+  return(table(x))
+}
+process.lik = function(x){
+  return(factor(x, levels = c("Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree")))
+}
+process.lik.imp = function(x){
+  return(factor(x, levels = c("Not Important", "Slightly Important", "Medium Important", "Very Important", "Critically Important")))
+}
+
+
+
+
+
+sudata = read.csv("_DONOTADD_State_of_the_InnerSource_Survey 2020_Responses.csv", na.strings = c('NA',''))
+sudata$Timestamp = NULL
+header.map = colnames(sudata)
+names(header.map) = paste0("v",seq(79))
+colnames(sudata) = paste0("v",seq(79))
+sudata$v79 = NULL
+sudata$v78 = NULL
+sudata = data.frame(lapply(sudata, trimws))
+# Shorten some Responses
+sudata$v4 = gsub('Top-Down: Someone from management initiated the adoption', 'Top-Down: Initiated by Management', sudata$v4)
+sudata$v4 = gsub('A mix of both', 'A Mix of Top-Down & Bottom Up', sudata$v4)
+sudata$v4 = gsub('Bottom-Up: One/A small group of developers started the initiative', 'Bottom-Up: Initiated by developer(s)', sudata$v4)
+
+sudata$v6 = gsub("Recognition that the current approach won't scale with our ambitions / trajectory.", 'Accommodate Scaling', sudata$v6)
+sudata$v6 = gsub("Maintain and develop software developed by contractors that are no longer with the organization", 'Maintain Software w/o Contractor Support', sudata$v6)
+sudata$v6 = gsub("Avoid wasted time/resources solving similar problems multiple times in isolation", 'Creating reusable software', sudata$v6)
+sudata$v8 = gsub("We formed a cross organization group under our Open Source Program Office to foster the practice of InnerSource",'Establish InnerSource Foundation', sudata$v8)
+
+# Specific Answer questions
+toFact = c(2,4,11:15,18:40, 43:61, 70:72)
+sudata[,toFact] = lapply(sudata[,toFact], as.factor)
+# Numeric data
+numdata = c(1,3,5,10,63,67,68,73,75,76)
+for (i in numdata){
+  sudata[,i] = as.numeric(gsub('[^0-9.-]','',sudata[,i]))
+}
+```
+
+### *The Basics*
+
+```{r, company.basic, echo=FALSE, fig.show="hold", out.width="50%", warning=FALSE, fig.width=7, fig.height=6}
+#Team
+tf = as.data.frame(table(sudata$v2))
+tf$piepercent<- round(100*tf$Freq/sum(tf$Freq), 1)
+pie(tf$Freq, labels = paste0(tf$piepercent,"%"), main = paste0(" Does the Organization have a \n dedicated InnerSource Team? (N=",length(na.omit(sudata$v2)),")"),col=myPalette, cex.lab=2, cex.axis=2, cex.main=1.8, cex.sub=2)
+legend("bottomright",tf$Var1, cex = 1.2, fill = myPalette, legend = tf$Var1)
+
+# Introduction
+t=process.mad(sudata$v4)
+df = as.data.frame(t)
+df$x = as.character(levels(df$x))
+df$newx = str_wrap(df$x, width = 18)
+df = df[order(df$Freq, decreasing = T),]
+df$piepercent<- round(100*df$Freq/length(na.omit(sudata$v4)), 0)
+
+ggplot(data=df, aes(x = reorder(newx, Freq), y = Freq)) +
+  geom_bar(position="dodge",stat="identity") + coord_flip() + 
+  labs(title=str_wrap(paste0("Introduction of InnerSource N=(",length(na.omit(sudata$v4)),")"), 25), x='', y =  'No. of Respondents' ) +  scale_x_discrete(guide = guide_axis(n.dodge=2)) +theme(text = element_text(size=18)) +  geom_text(aes(label=paste0(Freq,'(',piepercent,"%)")), position=position_dodge(width=0.9), hjust = -0) + scale_y_continuous(limits = c(0,20))
+
+
+
+#No. Projects
+plt1 <- subset(sudata, !is.na(v3)) %>% select(v3) %>%
+  ggplot(aes(x="", y = v3)) +
+  geom_boxplot(fill = "lightblue", color = "black") +
+  geom_violin(alpha = 0.2, color=myPalette[1]) +  
+  scale_y_continuous(breaks=c(0,4,25,100,2000), trans = "log1p")  + 
+  coord_flip() +
+  xlab("") + ylab("No. of Projects Distribution") +
+  theme(axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(), text = element_text(size=20), 
+        axis.text.x = element_text(angle = 0, vjust = 0.5, hjust=1))
+plt2 <- ggplot(data = subset(sudata, !is.na(v3)), aes(x=factor(v3))) +
+  geom_histogram( stat = "count", color='black', alpha=0.9, position = "identity")  +
+  labs(title = paste0(' No. of InnerSource Projects \n at the Organization (N=',length(na.omit(sudata$v3)),")"), x='No. of Projects', y='No. of Organizations' ) + theme(text = element_text(size=20))  + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+invisible(egg::ggarrange(plt2, plt1, heights = 2:1))
+
+# InnerSource years
+plt1 <- subset(sudata, !is.na(v5)) %>% select(v5) %>%
+  ggplot(aes(x="", y = v5)) +
+  geom_boxplot(fill = "lightblue", color = "black") + 
+  geom_violin(alpha = 0.2, color=myPalette[1]) +
+  coord_flip() + scale_y_continuous(trans = "log1p", breaks = c(0,1,2,3, 10, 20)) +
+  xlab("") + ylab("InnerSource Experience Distribution") +
+  theme(axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(), text = element_text(size=20), 
+        axis.text.x = element_text(angle = 0, vjust = 0.5, hjust=1))
+plt2 <- ggplot(data = subset(sudata, !is.na(v5)), aes(x=factor(v5))) +
+  geom_histogram( stat = "count", color='black', alpha=0.9, position = "identity")  +
+  labs(title = paste0(" Organization's InnerSource \n Experience (N = ",length(na.omit(sudata$v5)),")"), x='Years', y='No. of Organizations' ) + theme(text = element_text(size=18))  + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + scale_y_continuous(position = "right")
+
+
+invisible(egg::ggarrange(plt2, plt1, heights = 2:1))
+
+```
+<br></br>
+
+### **Adopting InnerSource and its Effects**
+```{r, adopt, echo=FALSE, fig.show="hold", out.width="70%", fig.align="center", fig.height=7}
+# Reason Adoption
+t=process.mad(sudata$v6)
+df = as.data.frame(t)
+df$x = as.character(levels(df$x))
+df$newx = str_wrap(df$x, width = 20)
+df = df[order(df$Freq, decreasing = T),]
+df$piepercent<- round(100*df$Freq/length(na.omit(sudata$v6)), 0)
+
+ggplot(data=df, aes(x = reorder(newx, Freq), y = Freq)) +
+  geom_bar(position="dodge",stat="identity") + coord_flip() + 
+  labs(title=str_wrap(paste0("Reasons for InnerSource Adoption (N=",length(na.omit(sudata$v6)),")"),30), x='', y = 'No. of Responses') +  scale_x_discrete(guide = guide_axis(n.dodge=2)) +theme(text = element_text(size=13)) +  geom_text(aes(label=paste0(Freq,'(',piepercent,"%)")), position=position_dodge(width=0.9), hjust = -0) + scale_y_continuous(limits = c(0,39))
+
+# Step Adoption
+t=process.mad(sudata$v8)
+df = as.data.frame(t)
+df$x = as.character(levels(df$x))
+df[7,1] = "Following InnerSource Patterns"
+df$newx = str_wrap(df$x, width = 20)
+df = df[order(df$Freq, decreasing = T),]
+df$piepercent<- round(100*df$Freq/length(na.omit(sudata$v8)), 0)
+ggplot(data=df, aes(x = reorder(newx, Freq), y = Freq)) +
+  geom_bar(position="dodge",stat="identity") + coord_flip() + 
+  labs(title=str_wrap(paste0("Steps taken to make InnerSource Successful (N=",length(na.omit(sudata$v6)),")"), 35), x='', y = 'No. of Responses') +  scale_x_discrete(guide = guide_axis(n.dodge=2)) +theme(text = element_text(size=13)) +  geom_text(aes(label=paste0(Freq,'(',piepercent,"%)")), position=position_dodge(width=0.9), hjust = -0) + scale_y_continuous(limits = c(0,25))
+
+# Effect Adoption
+t=process.mad(sudata$v7)
+df = as.data.frame(t)
+df$x = as.character(levels(df$x))
+df$newx = str_wrap(df$x, width = 20)
+df = df[order(df$Freq, decreasing = T),]
+df$piepercent<- round(100*df$Freq/length(na.omit(sudata$v7)), 0)
+ggplot(data=df, aes(x = reorder(newx, Freq), y = Freq)) +
+  geom_bar(position="dodge",stat="identity") + coord_flip() + 
+  labs(title=str_wrap(paste0("Observed Progress since InnerSource Adoption in: (N= ",length(na.omit(sudata$v6)),")"), 32), x='', y = 'No. of Responses') +  scale_x_discrete(guide = guide_axis(n.dodge=2)) +theme(text = element_text(size=13)) +  geom_text(aes(label=paste0(Freq,'(',piepercent,"%)")), position=position_dodge(width=0.9), hjust = -0) + scale_y_continuous(limits = c(0,32))
+
+```
+<br></br>
+
+# **InnerSource Project Contributions**
+
+
+```{r, fig.show="hold", warning=FALSE, echo=FALSE, out.width="70%", fig.height=7, fig.width= 8, fig.align="center"}
+# Contribution
+t=process.mad(sudata$v41)
+df = as.data.frame(t)
+df$x = as.character(levels(df$x))
+df$newx = str_wrap(df$x, width = 20)
+df = df[order(df$Freq, decreasing = T),]
+df$piepercent<- round(100*df$Freq/length(na.omit(sudata$v41)), 0)
+
+ggplot(data=df, aes(x = reorder(newx, Freq), y = Freq)) +
+  geom_bar(position="dodge",stat="identity") + coord_flip() + 
+  labs(title=str_wrap(paste0("InnerSource Project Contributions (N=",length(na.omit(sudata$v41)),")"), 25), x='', y = 'No. of Respondents') +  scale_x_discrete(guide = guide_axis(n.dodge=2)) +theme(text = element_text(size=16)) +  geom_text(aes(label=paste0(Freq,'(',piepercent,"%)")), position=position_dodge(width=0.9), hjust = -0) + scale_y_continuous(limits = c(0,34))
+```
+<br></br>
+
+# **Effect of InnerSource Adoption on self**
+
+```{r, effect, echo=FALSE, fig.show="hold", out.width="80%", fig.align="center", fig.width=12}
+# self effect
+lv = data.frame(lapply(sudata[,18:22], process.lik))
+lik.name = unlist(lapply(header.map[18:22], FUN = function(x){
+  return(trimws(gsub("\\."," ",gsub('.*\\.\\.\\.','',x))))
+}))
+colnames(lv) = paste0(lik.name," (N = ",colSums(!is.na(sudata[,18:22])),")")
+lk = likert(lv)
+plot(lk, centered=T, plot.percents =T, text.size=4, wrap=30, plot.percent.neutral=F, plot.percent.low=T, plot.percent.high=T) + theme(text = element_text(size=20)) + guides(fill=guide_legend(""))
+
+```
+<br></br>
+
+
+# **InnerSource Practices at the Organization**
+```{r, practices, echo=FALSE, fig.show="hold", out.width="80%", warning=FALSE, fig.align="center", fig.height=10, fig.width=12}
+# practices
+lv = data.frame(lapply(sudata[,27:36], process.lik))
+lik.name = unlist(lapply(header.map[27:36], FUN = function(x){
+  return(trimws(gsub("\\."," ",gsub('.*\\.\\.','',x))))
+}))
+colnames(lv) = paste0(lik.name," (N = ",colSums(!is.na(sudata[,27:36])),")")
+lk = likert(lv)
+plot(lk, centered=T, plot.percents =T, text.size=4, wrap=30, plot.percent.neutral=F, plot.percent.low=T, plot.percent.high=T) + theme(text = element_text(size=20)) + guides(fill=guide_legend(""))
+
+
+```
+
+
+<br></br>
+
+## **Perceived Progress and Success in InnerSource Adoption**
+
+```{r, progress-success, echo=FALSE, fig.show="hold", out.width="50%", warning=FALSE}
+# Progress
+ggplot(data = subset(sudata, !is.na(v1)), aes(x=factor(v1))) +
+  geom_histogram( stat = "count", color='black', alpha=0.9, position = "identity")  +
+  labs(title = str_wrap('Perceived Current Progress with InnerSource (on a scale of 1-5, 1 - Preparing for Adoption, 5 - InnerSource Pioneer)', 45), x='Years', y= paste0('No. of Organizations (N=',length(na.omit(sudata$v1)),")") ) + theme(text = element_text(size=16))  + scale_y_continuous(breaks = c(0,3,5,8,10,14))
+
+# Success
+ggplot(data = subset(sudata, !is.na(v10)), aes(x=factor(v10))) +
+  geom_histogram( stat = "count", color='black', alpha=0.9, position = "identity")  +
+  labs(title = str_wrap('Perceived Success of the InnerSource Projects (on a scale of 1-5, 1 - Not Successful, 5 - Extremely Successful)', 45), x='Years', y=paste0('No. of Organizations (N=',length(na.omit(sudata$v10)),")") ) + theme(text = element_text(size=16))  + scale_y_continuous(breaks = c(0,2,6,9,21), position = "right")
+
+```
+
+<br></br>
+
+# **Measuring InnerSource Adoption Progress/Success**
+
+### *Common Themes: * No. of InnerSource Ready projects, Cross-team Contributions, No. of Contributors, Employee Feedback/Survey
+
+### *Full Responses:*
+```{r, echo=FALSE, results="asis"}
+# Like
+cat((paste("* ",na.omit(sudata$v9), collapse = "\n")))
+
+```
+
+<br></br>
+
+## Statistically Significant Relationships:
+
+* Having an InnerSource team with How long ago InnerSource was introduced --- Positive correlation, p-Value: 0.017
+* No. of InnerSource Projects with how long ago InnerSource was introduced --- Positive correlation, p-Value: 4.4e-07
+* Perceived InnserSource Progress with having an InnerSource team --- Positive correlation, p-Value: 0.001
+* Perceived InnserSource Success with having an InnerSource team --- Positive correlation, p-Value: 0.014
+* Perceived InnserSource Progress with how long ago InnerSource was introduced --- Positive correlation, p-Value: 0.0005
+* Perceived InnserSource Success with how long ago InnerSource was introduced --- Positive correlation, p-Value: 0.005
+* Perceived InnserSource Success with Perceived InnserSource Progress --- Positive correlation, p-Value: 1e-5
+
+<i><u>No. of InnerSource projects had no significant relationship with the perceived InnerSource progress or success !</u></i>
+<br></br>

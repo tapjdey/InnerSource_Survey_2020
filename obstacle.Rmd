@@ -1,0 +1,156 @@
+---
+title: "InnerSource Adoption Obstacles"
+output: html_document
+---
+
+<style type="text/css">
+.main-container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 150%;
+}
+</style>
+
+```{r setup, prep, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(ggplot2)
+library(maps)
+library(hrbrthemes)
+library(viridis)
+library(scales)
+library(stringr)
+library(ggthemr)
+library(RColorBrewer)
+library(egg)
+library(dplyr)
+require(scales)
+library(likert)
+library(plyr)
+
+myPalette <- brewer.pal(5, "Set2") 
+ggthemr("pale") 
+
+# For processing multiple answer data
+process.mad = function(x){
+  x = x[!(is.na(x))]
+  x = unlist(x)
+  x = paste(x,',')
+  x = unlist(strsplit(x,','))
+  x = trimws(x)
+  x = x[x != ""]
+
+  return(table(x))
+}
+process.lik = function(x){
+  return(factor(x, levels = c("Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree")))
+}
+process.lik.imp = function(x){
+  return(factor(x, levels = c("Not Important", "Slightly Important", "Medium Important", "Very Important", "Critically Important")))
+}
+sub.lik = function(x){
+  return(trimws(gsub("\\."," ",gsub('.*\\.\\.\\.','',x))))
+}
+
+
+
+
+sudata = read.csv("_DONOTADD_State_of_the_InnerSource_Survey 2020_Responses.csv", na.strings = c('NA',''))
+sudata$Timestamp = NULL
+header.map = colnames(sudata)
+names(header.map) = paste0("v",seq(79))
+colnames(sudata) = paste0("v",seq(79))
+sudata$v79 = NULL
+sudata$v78 = NULL
+sudata = data.frame(lapply(sudata, trimws))
+# Shorten some Responses
+sudata$v6 = gsub("Recognition that the current approach won't scale with our ambitions / trajectory.", 'Accommodate Scaling', sudata$v6)
+sudata$v6 = gsub("Maintain and develop software developed by contractors that are no longer with the organization", 'Maintain Software w/o Contractor Support', sudata$v6)
+sudata$v6 = gsub("Avoid wasted time/resources solving similar problems multiple times in isolation", 'Creating reusable software', sudata$v6)
+sudata$v8 = gsub("We formed a cross organization group under our Open Source Program Office to foster the practice of InnerSource",'Establish InnerSource Foundation', sudata$v8)
+
+# Specific Answer questions
+toFact = c(2,4,11:15,18:40, 43:61, 70:72)
+sudata[,toFact] = lapply(sudata[,toFact], as.factor)
+# Numeric data
+numdata = c(1,3,5,10,63,67,68,73,75,76)
+for (i in numdata){
+  sudata[,i] = as.numeric(gsub('[^0-9.-]','',sudata[,i]))
+}
+```
+
+# **The Big One(s)**
+
+```{r, company.basic, echo=FALSE, fig.show="hold", out.width="80%", warning=FALSE, fig.width=8, fig.height=9, fig.align="center"}
+# Big Ones
+t=process.mad(sudata$v42)
+df = as.data.frame(t)
+df$x = as.character(levels(df$x))
+df$newx = str_wrap(df$x, width = 18)
+df = df[order(df$Freq, decreasing = T),]
+df$piepercent<- round(100*df$Freq/length(na.omit(sudata$v42)), 0)
+
+ggplot(data=df, aes(x = reorder(newx, Freq), y = Freq)) +
+  geom_bar(position="dodge",stat="identity") + coord_flip() + 
+  labs(title=str_wrap(paste0("The Biggest Obstacles for InnerSource Success (N=",length(na.omit(sudata$v42)), ")" ), 28), x='', y = 'No. of Respondents') +  scale_x_discrete(guide = guide_axis(n.dodge=2)) +theme(text = element_text(size=15)) +  geom_text(aes(label=paste0(Freq,'(',piepercent,"%)")), position=position_dodge(width=0.9), hjust = -0) + scale_y_continuous(limits = c(0,39))
+
+```
+<br></br>
+
+# **InnerSource Adoption Obstacles from the Managements' Perspective**
+```{r, manage, echo=FALSE, fig.show="hold", out.width="80%", fig.align="center", fig.width=10, fig.height=6}
+# self effect
+lv = data.frame(lapply(sudata[,43:47], process.lik))
+lik.name = unlist(lapply(header.map[43:47], sub.lik))
+colnames(lv) = paste0(lik.name," (N = ",colSums(!is.na(sudata[,43:47])),")")
+lk = likert(lv)
+plot(lk, centered=T, plot.percents =T, text.size=4, wrap=30, plot.percent.neutral=F, plot.percent.low=T, plot.percent.high=T) + theme(text = element_text(size=17)) + guides(fill=guide_legend(""))
+```
+<br></br>
+
+# **InnerSource Adoption Obstacles from the Employees' Perspective**
+```{r, developer, echo=FALSE, fig.show="hold", out.width="80%", fig.align="center", fig.width=12, fig.height=7}
+# self effect
+lv = data.frame(lapply(sudata[,48:55], process.lik))
+lik.name = unlist(lapply(header.map[48:55], sub.lik))
+colnames(lv) = paste0(lik.name," (N = ",colSums(!is.na(sudata[,48:55])),")")
+lk = likert(lv)
+plot(lk, centered=T, plot.percents =T, text.size=4, wrap=30, plot.percent.neutral=F, plot.percent.low=T, plot.percent.high=T) + theme(text = element_text(size=17)) + guides(fill=guide_legend(""))
+```
+<br></br>
+
+# **Our Respondents found these Project Management Practices Problematic**
+```{r, prac, echo=FALSE, fig.show="hold", out.width="80%", fig.align="center", fig.width=10, fig.height=6}
+# self effect
+lv = data.frame(lapply(sudata[,56:61], process.lik))
+lik.name = unlist(lapply(header.map[56:61], sub.lik))
+colnames(lv) = paste0(lik.name," (N = ",colSums(!is.na(sudata[,56:61])),")")
+lk = likert(lv)
+plot(lk, centered=T, plot.percents =T, text.size=4, wrap=30, plot.percent.neutral=F, plot.percent.low=T, plot.percent.high=T) + theme(text = element_text(size=17)) + guides(fill=guide_legend(""))
+```
+<br></br>
+
+# **Other Major Problems for InnerSource Adoption & Success**
+
+### *Common Themes: *Misconception about InnerSource, Project Governance Structure, Legacy Tools/Contribution Evaluation System, Culture
+
+### *Full Responses:*
+
+```{r, echo=FALSE, results="asis"}
+cat(str_to_sentence(paste("* ",na.omit(sudata$v62), collapse = "\n")))
+
+```
+
+<br></br>
+
+# **Aspects Needing Immediate Attention for Ensuring InnerSource Success**
+
+### *Common Themes: * Management Support, Community Building, Change in Mindset, Incentivize Contributions
+
+### *Full Responses:*
+
+```{r, echo=FALSE, results="asis"}
+cat((paste("* ",na.omit(sudata$v77), collapse = "\n")))
+
+```

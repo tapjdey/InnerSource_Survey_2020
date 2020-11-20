@@ -15,12 +15,12 @@
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
 <script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
@@ -272,7 +272,7 @@ $(document).ready(function () {
 
 
 
-<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
@@ -285,14 +285,71 @@ $(document).ready(function () {
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="Index.html">Home</a>
-</li>
-<li>
-  <a href="Profile.html">
-    <span class="fa fa-id-card"></span>
+  <a href="Index.html">
+    <span class="fa fa-newspaper"></span>
      
-    Respondant Profile
+    Summary
   </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Demographics
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Profile.html">
+        <span class="fa fa-id-card"></span>
+         
+        Respondants' Profile
+      </a>
+    </li>
+    <li>
+      <a href="company.html">
+        <span class="fa fa-building"></span>
+         
+        Organizations' Profile
+      </a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Detailed Results
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="adoption.html">
+        <span class="fa fa-exchange-alt"></span>
+         
+        InnerSource Adoption
+      </a>
+    </li>
+    <li>
+      <a href="success.html">
+        <span class="fa fa-grin-stars"></span>
+         
+        InnerSource Success
+      </a>
+    </li>
+    <li>
+      <a href="obstacle.html">
+        <span class="fa fa-stop-circle"></span>
+         
+        InnerSource Obstacles
+      </a>
+    </li>
+    <li>
+      <a href="commons.html">
+        <span class="fa fa-users"></span>
+         
+        Re: InnerSource Commons
+      </a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -311,6 +368,13 @@ $(document).ready(function () {
 
 
 <style type="text/css">
+.main-container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 120%;
+
+}
 .tg  {border-collapse:collapse;border-spacing:0;}
 .tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
   overflow:hidden;padding:10px 5px;word-break:normal;}
@@ -322,18 +386,46 @@ $(document).ready(function () {
 <table class="tg" style="width:100%">
 <tbody>
 <tr>
-<td class="tg-zv4m" style="width:70%">
+<td class="tg-zv4m" style="width:60%">
 <img src='image.png'>
 </td>
-<td class="tg-mfl2" style="width:30%">
-<span style="font-weight:bold"><strong>Tapajit Dey</strong></span> and <span style="font-weight:bold"><strong>Brian Fitzgerald</strong></span> <br><span style="font-style:italic"><em>Lero — The Irish Software Research Center</em></span><br> <span style="font-weight:bold"><strong>Clare Dillon</strong></span> and others <br> <span style="font-style:italic"><em>InnerSource Commons</em></span>
+<td class="tg-mfl2" style="width:40%">
+<span style="font-weight:bold"><br></br><strong>Tapajit Dey</strong></span> and <span style="font-weight:bold"><strong>Brian Fitzgerald</strong></span> <br><span style="font-style:italic"><em>Lero — The Irish Software Research Center</em></span><br></br> We are grateful to <span style="font-weight:bold"><strong>Clare Dillon</strong></span> and others from <span style="font-style:italic"><em>InnerSource Commons</em></span> for their generous support, testers of the Pilot Survey, and every Respondent of the Survey for participating.<br><br></br>
 </td>
 </tr>
 </tbody>
 </table>
-<div id="how-likely-are-you-to-recommend-innersource-to-colleagues-outside-your-organization" class="section level1">
-<h1><strong>How likely are you to recommend InnerSource to colleagues outside your organization?</strong></h1>
-<p><img src="Index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<div id="survey-objectives" class="section level1">
+<h1><strong>Survey Objectives</strong></h1>
+<p>Open Source has been a successful model for software development, with over 135M Open Source projects in existence and over 47M developers contributing to them (<a href="https://bitbucket.org/swsc/overview/src/master/README.md">source: World of Code Dataset summary</a>) across various platforms like GitHub, BitBucket, GitLab etc., and it continues to play an important role in the software industry, not only because of the high quality open source software products many of their products rely on, but also because organizations increasingly realize that open development approaches offer many benefits, including sustainability, scaling, and quality assurance. Hence, many organizations are trying to adopt the open source development practices within their boundaries, a practice that is known as <strong>InnerSource</strong>, since the term was coined by Tim O’Reilly.</p>
+<p>In the past few years, InnerSource is gaining much attention from companies around the globe. In 2015, the InnerSource Commons community was founded by Danese Cooper from PayPal to help promote the practice across different organizations, and the community is growing ever since, with over 500 members in the InnerSource Commons Slack channel. This community of software professionals are experimenting with open source development practices to overcome the many barriers and challenges that exist in many software organizations.</p>
+<p>The 2020 State of the InnerSource Survey was conducted as a checkpoint to assess how the InnerSource community is shaping up, what we have been doing right, and what aspects need improvement.</p>
+<div id="the-goal-of-the-survey-was-to-address-three-main-questions--" class="section level3">
+<h3>The goal of the survey was to address three main questions -</h3>
+<ol style="list-style-type: decimal">
+<li>What is the state of InnerSource adoption across different organizations?</li>
+<li>What factors influence the success of InnerSource adoption?</li>
+<li>What are the main obstacles for adopting InnerSource?</li>
+</ol>
+<p>Since a number of studies (e.g. <a href="https://dl.acm.org/doi/10.1145/2533685">Key Factors</a>, <a href="https://innersourcecommons.org/resources/books/adoptinginnersource/">Adoption Book</a>, <a href="https://ieeexplore.ieee.org/document/6809709">Adoption Tutorial</a>) already documented the Key Factors for InnerSource success in detail, we focused more on exploring the key motivations for contributors and the <em>obstacles</em>.</p>
+</div>
+</div>
+<div id="survey-result" class="section level1">
+<h1><strong>Survey Result</strong></h1>
+<p>So far, we have received 41 responses in total. The demographic profiles of the respondents and their organizations are listed in the corresponding tabs under the <strong>Demographics</strong> Menu on the Header of this page. The detailed results for InnerSource Adoption, Success Factors, Obstacles, and our respondents’ opinion on the InnerSource commons platform are listed in the corresponding tabs under the <strong>Detailed Results</strong> Menu on the Header.</p>
+<p>In Summary, most of the responses we got were from Europe and North Americas, predominantly Male, but with many different professional roles across all ages, working at companies of various sizes (2 - 400,000), mostly in Tech companies, but also from Banking &amp; Finance.</p>
+<p>Our respondents reported a medium progress/success with InnerSource overall, and noted the main reasons for <em>adoption</em> were <strong>Removing Silos &amp; Bottlenecks</strong> and <strong>Knowledge Sharing</strong>, and reported a measurable progress in the latter goal.</p>
+<p>Creating a sense of belonging by <em>interacting with others with similar interests</em> and the <em>empowerment to fix defects</em> (The third and fourth levels of <a href="https://en.wikipedia.org/wiki/Maslow&#39;s_hierarchy_of_needs">Maslow’s hierarchy of needs</a>) were the key motivations for contribution, and people mostly contributed to the projects related to their work and/or the ones with significant value to the organization.</p>
+<p>Time was the biggest constraint for InnerSource contributions, along with misconceptions about InnerSource among the employees and legacy incentive and governance structures that do not value InnerSource contributions as much.</p>
+<p>People mostly find the InnerSource Commons platform useful, and we received a few ideas about further improvement (and the need of further outreach!).</p>
+<div id="the-good-news-people-are-very-much-willing-to-recommend-innersource-to-colleagues-outside-their-organization-and-not-a-single-negative-response-on-that" class="section level3">
+<h3><strong>The Good News: People are very much willing to recommend InnerSource to colleagues outside their organization, and not a single Negative response on that!!!</strong></h3>
+<p><img src="Index_files/figure-html/unnamed-chunk-2-1.png" width="80%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="methodology" class="section level1">
+<h1><strong>Methodology</strong></h1>
+<p>We designed an online questionnaire targeting practitioners of InnerSource, which we advertised through the InnerSource Commons Slack channel and other social medias like LinkedIn &amp; Twitter. We got 41 responses in total, including the responses to the pilot version of the survey. A few responses were cleaned manually to correct spellings, remove unrelated answers, and coining common themes.</p>
 </div>
 
 

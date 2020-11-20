@@ -1,12 +1,14 @@
 ---
 title: "**Respondent profile**"
-output: slidy_presentation
+output: html_document
 ---
 <style type="text/css">
 .main-container {
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
+  font-size: 150%;
+
 }
 </style>
 
@@ -21,22 +23,33 @@ library(scales)
 library(stringr)
 library(ggthemr)
 library(RColorBrewer)
+library(egg)
+library(dplyr)
+library(likert)
+library(plyr)
+
 myPalette <- brewer.pal(5, "Set2") 
 ggthemr("grape") 
 
 # For processing multiple answer data
 process.mad = function(x){
+  x = x[!(is.na(x))]
   x = unlist(x)
-  x = paste(x,';')
-  x = unlist(strsplit(x,';'))
+  x = paste(x,',')
+  x = unlist(strsplit(x,','))
   x = trimws(x)
   x = x[x != ""]
 
   return(table(x))
 }
-t
+process.lik = function(x){
+  return(factor(x, levels = c("Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree")))
+}
+sub.lik = function(x){
+  return(trimws(gsub("\\."," ",gsub('.*\\.\\.\\.','',x))))
+}
 
-sudata = read.csv("~/Desktop/State of the InnerSource Survey 2020.csv")
+sudata = read.csv("_DONOTADD_State_of_the_InnerSource_Survey 2020_Responses.csv")
 sudata$Timestamp = NULL
 header.map = colnames(sudata)
 names(header.map) = paste0("v",seq(79))
@@ -86,37 +99,64 @@ ggplot() +
   geom_polygon(data=worlddata, aes(x = long, y = lat, group = group), fill="#e0e0e0", colour = "white", alpha=0.7)  +  geom_path(data = worlddata, aes(x = long, y = lat, group = group), alpha=0.7) + geom_point(data = df, aes(x = long, y = lat, size = Freq), fill='#bf24ee', alpha= 0.7, shape=21, color="black") + scale_size(range = c(15,40))+ geom_text(data=df, aes(x = long, y = lat, label=Freq),position = position_dodge(width=0.9),  size=10) + scale_fill_viridis(discrete=TRUE, guide=FALSE, option="A") + theme_void() + theme(legend.position="none") 
 
 ```
+<br></br>
 
 # **Age and Gender Profiles**
-```{r, echo=FALSE, figures-side, fig.show="hold", out.width="50%", fig.retina=1}
+<br>
+```{r, echo=FALSE, figures-side, fig.show="hold", out.width="50%", results='hide', fig.retina=1, warning=FALSE,message=FALSE,error=FALSE}
 #Gender
 tf = as.data.frame(table(sudata$v72))
 tf$piepercent<- round(100*tf$Freq/sum(tf$Freq), 1)
-pie(tf$Freq, labels = tf$Freq, main = "Gender distribution of the Survey Respondents",col=myPalette)
-legend("topright",tf$Var1, cex = 0.8, fill = myPalette, legend = tf$Var1)
+pie(tf$Freq, labels = paste0(tf$piepercent,"%"), main = paste0("Gender distribution of \n the Survey Respondents(N=",length(na.omit(sudata$v72)),')') ,col=myPalette, cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
+legend("bottomright",tf$Var1, cex = 1.2, fill = myPalette, legend = tf$Var1)
 #Age
-ggplot(data = subset(sudata, !is.na(v73)), aes(x=v73)) +
-  geom_histogram( binwidth = 1, color='black')  +
-  labs(title = 'Age distribution of the Survey Respondents', x='Age', y='No. of Respondents' )
+plt1 <- subset(sudata, !is.na(v73)) %>% select(v73) %>%
+  ggplot(aes(x="", y = v73)) +
+  geom_boxplot(fill = "lightblue", color = "black") + 
+  coord_flip() +
+  xlab("") + ylab("Age Distribution") +
+  theme(axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(), text = element_text(size=20))
+plt2 <- ggplot(data = subset(sudata, !is.na(v73)), aes(x=v73, fill = v72)) +
+  geom_histogram( binwidth = 1, color='black', alpha=0.5, position = "identity")  +
+  labs(title = paste0(' Age distribution of the \n Survey Respondents(N=',length(na.omit(sudata$v73)),')'), x='Age', y='No. of Respondents', fill="Gender" ) + theme(text = element_text(size=20)) 
+invisible(egg::ggarrange(plt2, plt1, heights = 2:1)) 
 
 ```
+<br></br>
 
-# **Professional Roles and Experience overview**
-```{r, echo=FALSE, fig.show="hold", out.width="50%"}
+# **Professional Roles and Experience **
+
+```{r, echo=FALSE, fig.show="hold", out.width="50%", results='hide', fig.retina=1, warning=FALSE,message=FALSE,error=FALSE, fig.height=7}
+
 # Role
 t=process.mad(sudata$v74)
 df = as.data.frame(t)
 df$x = as.character(levels(df$x))
 df$newx = str_wrap(df$x, width = 20)
 df = df[order(df$Freq, decreasing = T),]
-ggthemr("grape") 
+df$piepercent<- round(100*df$Freq/length(na.omit(sudata$v74)), 0)
+
 ggplot(data=df, aes(x = reorder(newx, Freq), y = Freq)) +
   geom_bar(position="dodge",stat="identity") + coord_flip() + 
-  labs(title=str_wrap("Professional Role od Respondents", 50), x='Professional Role', y = 'No. of Respondents') +  scale_x_discrete(guide = guide_axis(n.dodge=2))
+  labs(title=str_wrap(paste0("Professional Role of Respondents (N=",length(na.omit(sudata$v74)),")"), 30), x='', y = 'No. of Respondents') +  scale_x_discrete(guide = guide_axis(n.dodge=2)) +theme(text = element_text(size=16)) +  geom_text(aes(label=paste0(Freq,'(',piepercent,"%)")), position=position_dodge(width=0.9), hjust = -0) + scale_y_continuous(limits = c(0,14))
 
 # Experience
-ggplot(data = subset(sudata, !is.na(v75)), aes(x=v75)) +
-  geom_histogram( binwidth = 1, color='black') +
-  labs(title = 'Years of Experience distribution of the Survey Respondents', x='Experience in Years', y='No. of Respondents' )
+plt1 <- subset(sudata, !is.na(v75)) %>% select(v75) %>%
+  ggplot(aes(x="", y = v75)) +
+  geom_boxplot(fill = "lightblue", color = "black") + 
+  coord_flip() +
+  xlab("") + ylab("Years of Experience Distribution") +
+  theme(axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(), text = element_text(size=20))
+plt2 = ggplot(data = subset(sudata, !is.na(v75)), aes(x=v75, fill = v72)) +
+  geom_histogram( binwidth = 1, color='black', alpha=0.5, position = "identity")  +
+  labs(title = paste0(' Years of Experience distribution of the \n Survey Respondents(N=',length(na.omit(sudata$v75)),')'), x='Experience in Years', y='No. of Respondents' , fill="Gender") + theme(text = element_text(size=20)) 
+invisible(egg::ggarrange(plt2, plt1, heights = 2:1)) 
+
 ```
+<br></br>
+
+
+
 

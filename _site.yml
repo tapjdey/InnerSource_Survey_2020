@@ -1,13 +1,38 @@
 name: "survey-result"
 navbar:
   title: "Survey Result"
+  type: inverse
   left:
-    - text: "Home"
+    - text: "Summary"
+      icon: fa-newspaper
       href: Index.html
-    - text: "Respondant Profile"
-      icon: fa-id-card
-      href: Profile.html
-output:
+    - text: "Demographics"
+      menu:
+      - text: "Respondants' Profile"
+        icon: fa-id-card
+        href: Profile.html
+      - text: "Organizations' Profile"
+        icon: fa-building
+        href: company.html
+    - text: "Detailed Results"
+      menu:
+      - text: "InnerSource Adoption"
+        icon: fa-exchange-alt
+        href: adoption.html
+      - text: "InnerSource Success"
+        icon: fa-grin-stars
+        href: success.html
+      - text: "InnerSource Obstacles"
+        icon: fa-stop-circle
+        href: obstacle.html 
+      - text: "Re: InnerSource Commons"
+        icon: fa-users
+        href: commons.html 
+      # - text: "Ideas"
+      #   icon: fa-lightbulb
+      #   href: ideas.html
+ 
+  output:
   html_document:
     theme: cosmo
     highlight: textmate

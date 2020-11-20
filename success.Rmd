@@ -1,0 +1,155 @@
+---
+title: "**InnerSource Success Factors**"
+output: html_document
+---
+
+<style type="text/css">
+.main-container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 150%;
+}
+</style>
+
+```{r setup, prep, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(ggplot2)
+library(maps)
+library(hrbrthemes)
+library(viridis)
+library(scales)
+library(stringr)
+library(ggthemr)
+library(RColorBrewer)
+library(egg)
+library(dplyr)
+require(scales)
+library(likert)
+library(plyr)
+
+myPalette <- brewer.pal(5, "Set2") 
+ggthemr("fresh") 
+
+# For processing multiple answer data
+process.mad = function(x){
+  x = x[!(is.na(x))]
+  x = unlist(x)
+  x = paste(x,',')
+  x = unlist(strsplit(x,','))
+  x = trimws(x)
+  x = x[x != ""]
+
+  return(table(x))
+}
+process.lik = function(x){
+  return(factor(x, levels = c("Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree")))
+}
+process.lik.imp = function(x){
+  return(factor(x, levels = c("Not Important", "Slightly Important", "Medium Important", "Very Important", "Critically Important")))
+}
+sub.lik = function(x){
+  return(trimws(gsub("\\."," ",gsub('.*\\.\\.\\.','',x))))
+}
+
+
+
+
+sudata = read.csv("_DONOTADD_State_of_the_InnerSource_Survey 2020_Responses.csv", na.strings = c('NA',''))
+sudata$Timestamp = NULL
+header.map = colnames(sudata)
+names(header.map) = paste0("v",seq(79))
+colnames(sudata) = paste0("v",seq(79))
+sudata$v79 = NULL
+sudata$v78 = NULL
+sudata = data.frame(lapply(sudata, trimws))
+# Shorten some Responses
+sudata$v6 = gsub("Recognition that the current approach won't scale with our ambitions / trajectory.", 'Accommodate Scaling', sudata$v6)
+sudata$v6 = gsub("Maintain and develop software developed by contractors that are no longer with the organization", 'Maintain Software w/o Contractor Support', sudata$v6)
+sudata$v6 = gsub("Avoid wasted time/resources solving similar problems multiple times in isolation", 'Creating reusable software', sudata$v6)
+sudata$v8 = gsub("We formed a cross organization group under our Open Source Program Office to foster the practice of InnerSource",'Establish InnerSource Foundation', sudata$v8)
+
+# Specific Answer questions
+toFact = c(2,4,11:15,18:40, 43:61, 70:72)
+sudata[,toFact] = lapply(sudata[,toFact], as.factor)
+# Numeric data
+numdata = c(1,3,5,10,63,67,68,73,75,76)
+for (i in numdata){
+  sudata[,i] = as.numeric(gsub('[^0-9.-]','',sudata[,i]))
+}
+```
+
+# **Motivation for Contributing to InnerSource Projects**
+
+```{r, fig.show="hold", warning=FALSE, echo=FALSE, out.width="70%", fig.height=7, fig.width= 8, fig.align="center"}
+# Motivation
+t=process.mad(sudata$v17)
+df = as.data.frame(t)
+df$x = as.character(levels(df$x))
+df$newx = str_wrap(df$x, width = 20)
+df = df[order(df$Freq, decreasing = T),]
+df$piepercent<- round(100*df$Freq/length(na.omit(sudata$v17)), 0)
+
+ggplot(data=df, aes(x = reorder(newx, Freq), y = Freq)) +
+  geom_bar(position="dodge",stat="identity") + coord_flip() + 
+  labs(title=str_wrap(paste0("Motivations for Contribution (N=",length(na.omit(sudata$v17)),")"), 35), x='', y = 'No. of Respondents') +  scale_x_discrete(guide = guide_axis(n.dodge=2)) +theme(text = element_text(size=14)) +  geom_text(aes(label=paste0(Freq,'(',piepercent,"%)")), position=position_dodge(width=0.9), hjust = -0) + scale_y_continuous(limits = c(0,26))
+```
+
+<br></br>
+
+# **Selecting the Perfect Project to Contribute to**
+
+```{r, fig.show="hold", warning=FALSE, echo=FALSE, out.width="70%", fig.height=7, fig.width= 8, fig.align="center"}
+# Contribution
+t=process.mad(sudata$v16)
+df = as.data.frame(t)
+df$x = as.character(levels(df$x))
+df$newx = str_wrap(df$x, width = 20)
+df = df[order(df$Freq, decreasing = T),]
+df$piepercent<- round(100*df$Freq/length(na.omit(sudata$v16)), 0)
+
+ggplot(data=df, aes(x = reorder(newx, Freq), y = Freq)) +
+  geom_bar(position="dodge",stat="identity") + coord_flip() + 
+  labs(title=str_wrap(paste0("Selecting an InnerSource Project to Contribute (N=",length(na.omit(sudata$v16)),")"), 28), x='', y = 'No. of Respondents') +  scale_x_discrete(guide = guide_axis(n.dodge=2)) +theme(text = element_text(size=14)) +  geom_text(aes(label=paste0(Freq,'(',piepercent,"%)")), position=position_dodge(width=0.9), hjust = -0) + scale_y_continuous(limits = c(0,30))
+```
+Easy to Contribute to -> Clear documentation on how to contribute, i.e. setup development environment, run tests, etc...
+
+<br></br>
+
+# **Characteristics of Successful InnerSource Projects**
+
+```{r, effect, echo=FALSE, fig.show="hold", out.width="80%", fig.align="center", fig.width=12, fig.height=6}
+# self effect
+lv = data.frame(lapply(sudata[,11:15], process.lik.imp))
+lik.name = unlist(lapply(header.map[11:15], sub.lik))
+colnames(lv) = paste0(lik.name," (N = ",colSums(!is.na(sudata[,11:15])),")")
+lk = likert(lv)
+plot(lk, centered=T, plot.percents =T, text.size=4, wrap=30, plot.percent.neutral=F, plot.percent.low=T, plot.percent.high=T) + theme(text = element_text(size=20)) + guides(fill=guide_legend(""))
+# plot(lk, centered=F, text.size=3.5, plot.percents =T, plot.percent.neutral=F, plot.percent.low=F, plot.percent.high=F) 
+```
+<br></br>
+
+# **Attitude of the Management towards InnerSource projects**
+```{r, manage, echo=FALSE, fig.show="hold", out.width="80%", fig.align="center", fig.width=12, fig.height=6}
+# self effect
+lv = data.frame(lapply(sudata[,23:26], process.lik))
+lik.name = unlist(lapply(header.map[23:26], sub.lik))
+colnames(lv) = paste0(lik.name," (N = ",colSums(!is.na(sudata[,23:26])),")")
+lk = likert(lv)
+plot(lk, centered=T, plot.percents =T, text.size=4, wrap=30, plot.percent.neutral=F, plot.percent.low=T, plot.percent.high=T) + theme(text = element_text(size=17)) + guides(fill=guide_legend(""))
+```
+<br></br>
+
+# **Nature of Collaboration while working on InnerSource Projects**
+```{r, collab, echo=FALSE, fig.show="hold", out.width="80%", fig.align="center", fig.width=12, fig.height=6}
+# self effect
+lv = data.frame(lapply(sudata[,37:40], process.lik))
+lik.name = unlist(lapply(header.map[37:40], FUN = function(x){
+  return(trimws(gsub("\\."," ",gsub('.*\\.\\.','',x))))
+}))
+colnames(lv) = paste0(lik.name," (N = ",colSums(!is.na(sudata[,37:40])),")")
+lk = likert(lv)
+plot(lk, centered=T, plot.percents =T, text.size=4, wrap=30, plot.percent.neutral=F, plot.percent.low=T, plot.percent.high=T) + theme(text = element_text(size=17)) + guides(fill=guide_legend(""))
+```
+

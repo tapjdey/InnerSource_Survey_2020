@@ -1,0 +1,151 @@
+---
+title: "**Organization Profile**"
+output: html_document
+---
+
+<style type="text/css">
+.main-container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 150%;
+}
+</style>
+
+```{r setup, prep, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(ggplot2)
+library(maps)
+library(hrbrthemes)
+library(viridis)
+library(scales)
+library(stringr)
+library(ggthemr)
+library(RColorBrewer)
+library(egg)
+library(dplyr)
+require(scales)
+library(likert)
+
+myPalette <- brewer.pal(5, "Set2") 
+ggthemr("dust") 
+
+# For processing multiple answer data
+process.mad = function(x){
+  x = x[!(is.na(x))]
+  x = unlist(x)
+  x = paste(x,',')
+  x = unlist(strsplit(x,','))
+  x = trimws(x)
+  x = x[x != ""]
+
+  return(table(x))
+}
+process.lik = function(x){
+  return(factor(x, levels = c("Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree")))
+}
+sub.lik = function(x){
+  return(trimws(gsub("\\."," ",gsub('.*\\.\\.\\.','',x))))
+}
+
+
+sudata = read.csv("_DONOTADD_State_of_the_InnerSource_Survey 2020_Responses.csv", na.strings = c('NA',''))
+sudata$Timestamp = NULL
+header.map = colnames(sudata)
+names(header.map) = paste0("v",seq(79))
+colnames(sudata) = paste0("v",seq(79))
+sudata$v79 = NULL
+sudata$v78 = NULL
+sudata = data.frame(lapply(sudata, trimws))
+# Shorten some Responses
+sudata$v6 = gsub("Recognition that the current approach won't scale with our ambitions / trajectory.", 'Accommodate Scaling', sudata$v6)
+sudata$v6 = gsub("Maintain and develop software developed by contractors that are no longer with the organization", 'Maintain Software w/o Contractor Support', sudata$v6)
+sudata$v6 = gsub("Avoid wasted time/resources solving similar problems multiple times in isolation", 'Creating reusable software', sudata$v6)
+sudata$v8 = gsub("We formed a cross organization group under our Open Source Program Office to foster the practice of InnerSource",'Establish InnerSource Foundation', sudata$v8)
+
+# Specific Answer questions
+toFact = c(2,4,11:15,18:40, 43:61, 70:72)
+sudata[,toFact] = lapply(sudata[,toFact], as.factor)
+# Numeric data
+numdata = c(1,3,5,10,63,67,68,73,75,76)
+for (i in numdata){
+  sudata[,i] = as.numeric(gsub('[^0-9.-]','',sudata[,i]))
+}
+
+#country data
+t=process.mad(sudata$v69)
+df0 = as.data.frame(t)
+df0$x = as.character(levels(df0$x))
+
+df2 = data.frame('region'=df0$x)
+df2$lat = c(2,-15,15, 32, 50, 29, 46, -24)
+df2$long = c(24, -55, 80, 118 ,7, 47, -93, 137)
+```
+
+<!-- ## *In Which parts of the World and Which Sectors do the Organizations our Respondents work for Operate*  -->
+```{r, country_sector, echo=FALSE, fig.show="hold", out.width="70%", fig.height=6, fig.align="center"}
+#country data
+t=process.mad(sudata$v69)
+df0 = as.data.frame(t)
+df0$x = as.character(levels(df0$x))
+
+df = merge(df2, df0, by.x = 'region', by.y = 'x')
+
+worlddata = map_data('world')
+ggplot() +
+  geom_polygon(data=worlddata, aes(x = long, y = lat, group = group), fill="#e0e0e0", colour = "white", alpha=0.7)  +  geom_path(data = worlddata, aes(x = long, y = lat, group = group), alpha=0.7) + geom_point(data = df, aes(x = long, y = lat, size = Freq), fill='#e04b0b', alpha= 0.6, shape=21, color="black") + scale_size(range = c(18,35))+ geom_text(data=df, aes(x = long, y = lat, label=Freq),position = position_dodge(width=0.9),  size=10, color="white") + scale_fill_viridis(discrete=TRUE, guide=FALSE, option="A") + theme_void() + theme(legend.position="none") + labs(title = "Where the Organizations Operate") +theme(text = element_text(size=25))
+
+# Sectors
+t=process.mad(sudata$v70)
+df = as.data.frame(t)
+df$x = as.character(levels(df$x))
+df$newx = str_wrap(df$x, width = 20)
+df = df[order(df$Freq, decreasing = T),]
+df$piepercent<- round(100*df$Freq/length(na.omit(sudata$v70)), 0)
+
+ggplot(data=df, aes(x = reorder(newx, Freq), y = Freq)) +
+  geom_bar(position="dodge",stat="identity") + coord_flip() + 
+  labs(title=str_wrap(paste0("Organizational Sector Distribution (N=",length(na.omit(sudata$v64)),')'), 30), x='', y = 'No. of Organizations') +  scale_x_discrete(guide = guide_axis(n.dodge=2))+theme(text = element_text(size=15)) +  geom_text(aes(label=paste0(Freq,'(',piepercent,"%)")), position=position_dodge(width=0.9), hjust = -0) + scale_y_continuous(limits = c(0,12))
+
+
+```
+<br></br>
+
+## *Sizes of the Organizations*
+<br>
+
+```{r, size, echo=FALSE,  fig.show="hold", out.width="50%", results='hide', fig.retina=1, fig.height=8, warning=FALSE}
+#company size
+plt1 <- subset(sudata, !is.na(v67)) %>% select(v67) %>%
+  ggplot(aes(x="", y = v67)) + scale_y_continuous(breaks=c(2, 20, 100,200,500, 1000,2000, 5000, 10000, 20000, 50000, 100000, 400000), labels = comma, trans = "log1p") +
+  geom_boxplot(fill = "lightblue", color = "black") + 
+  geom_violin(alpha = 0.2, color=myPalette[1]) +
+  coord_flip() +
+  xlab("") + ylab("Size of the Organization Distribution") +
+  theme(axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(), 
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+theme(text = element_text(size=15))
+plt2 <- ggplot(data = subset(sudata, !is.na(v67)), aes(x=factor(v67))) +
+  geom_histogram( stat = "count", color='black')  +  labs(title = paste0('Size of the Organization  (N=',length(na.omit(sudata$v64)),')'), x='No. of Employees', y='No. of Organizations' ) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+theme(text = element_text(size=15))
+
+invisible(egg::ggarrange(plt2, plt1, heights = 2:1))
+
+#company SW dev
+plt1 <- subset(sudata, !is.na(v68)) %>% select(v68) %>%
+  ggplot(aes(x="", y = v68)) + scale_y_continuous(breaks=c(2,5,10, 20, 100,200,500, 1000,2000, 5000, 10000, 20000, 50000, 80000), labels = comma, trans = "log1p") +
+  geom_boxplot(fill = "lightblue", color = "black") + 
+  geom_violin(alpha = 0.2, color=myPalette[1]) +
+  coord_flip() +
+  xlab("") + ylab("No. of Software Developers at the Organization Distribution") +
+  theme(axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(), 
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+theme(text = element_text(size=15))
+plt2 <- ggplot(data = subset(sudata, !is.na(v68)), aes(x=factor(v68))) +
+  geom_histogram( stat = "count", color='black') +  labs(title = paste0('Software Developers at the Organization (N=',length(na.omit(sudata$v64)),')'), x='No. of Software Developers', y='No. of Organizations' ) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+theme(text = element_text(size=15))+ scale_y_continuous(position = "right")
+
+invisible(egg::ggarrange(plt2, plt1, heights = 2:1))
+
+```
+<br></br>
+

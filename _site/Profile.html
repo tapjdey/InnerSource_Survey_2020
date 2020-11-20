@@ -15,12 +15,12 @@
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
 <script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
@@ -272,7 +272,7 @@ $(document).ready(function () {
 
 
 
-<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
@@ -285,14 +285,71 @@ $(document).ready(function () {
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="Index.html">Home</a>
-</li>
-<li>
-  <a href="Profile.html">
-    <span class="fa fa-id-card"></span>
+  <a href="Index.html">
+    <span class="fa fa-newspaper"></span>
      
-    Respondant Profile
+    Summary
   </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Demographics
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Profile.html">
+        <span class="fa fa-id-card"></span>
+         
+        Respondants' Profile
+      </a>
+    </li>
+    <li>
+      <a href="company.html">
+        <span class="fa fa-building"></span>
+         
+        Organizations' Profile
+      </a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Detailed Results
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="adoption.html">
+        <span class="fa fa-exchange-alt"></span>
+         
+        InnerSource Adoption
+      </a>
+    </li>
+    <li>
+      <a href="success.html">
+        <span class="fa fa-grin-stars"></span>
+         
+        InnerSource Success
+      </a>
+    </li>
+    <li>
+      <a href="obstacle.html">
+        <span class="fa fa-stop-circle"></span>
+         
+        InnerSource Obstacles
+      </a>
+    </li>
+    <li>
+      <a href="commons.html">
+        <span class="fa fa-users"></span>
+         
+        Re: InnerSource Commons
+      </a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -316,19 +373,21 @@ $(document).ready(function () {
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
+  font-size: 150%;
+
 }
 </style>
 <div id="where-our-survey-respondents-are-from" class="section level1">
 <h1>Where our Survey Respondents are from</h1>
-<p><img src="Profile_files/figure-html/unnamed-chunk-1-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="Profile_files/figure-html/unnamed-chunk-1-1.png" width="80%" style="display: block; margin: auto;" /> <br></br></p>
 </div>
 <div id="age-and-gender-profiles" class="section level1">
 <h1><strong>Age and Gender Profiles</strong></h1>
-<p><img src="Profile_files/figure-html/figures-side-1.png" width="50%" /><img src="Profile_files/figure-html/figures-side-2.png" width="50%" /></p>
+<p><br> <img src="Profile_files/figure-html/figures-side-1.png" width="50%" /><img src="Profile_files/figure-html/figures-side-2.png" width="50%" /> <br></br></p>
 </div>
-<div id="professional-roles-and-experience-overview" class="section level1">
-<h1><strong>Professional Roles and Experience overview</strong></h1>
-<p><img src="Profile_files/figure-html/unnamed-chunk-2-1.png" width="50%" /><img src="Profile_files/figure-html/unnamed-chunk-2-2.png" width="50%" /></p>
+<div id="professional-roles-and-experience" class="section level1">
+<h1><strong>Professional Roles and Experience </strong></h1>
+<p><img src="Profile_files/figure-html/unnamed-chunk-2-1.png" width="50%" /><img src="Profile_files/figure-html/unnamed-chunk-2-2.png" width="50%" /> <br></br></p>
 </div>
 
 

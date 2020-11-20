@@ -8,7 +8,7 @@ library(ggthemr)
 
 
 
-sudata = read.csv("~/Desktop/State of the InnerSource Survey 2020.csv")
+sudata = read.csv("_DONOTADD_State_of_the_InnerSource_Survey 2020_Responses.csv")
 sudata$Timestamp = NULL
 header.map = colnames(sudata)
 names(header.map) = paste0("v",seq(79))
@@ -35,8 +35,8 @@ sudata[,toFact] = lapply(sudata[,toFact], as.factor)
 mad = c(6:8,16,17,41,42,64,69)
 process.mad = function(x){
   x = unlist(x)
-  x = paste(x,';')
-  x = unlist(strsplit(x,';'))
+  x = paste(x,',')
+  x = unlist(strsplit(x,','))
   x = trimws(x)
   x = x[x != ""]
 
