@@ -1,4 +1,5 @@
 name: "survey-result"
+output_dir: "docs"
 navbar:
   title: "Survey Result"
   type: inverse
