@@ -26,7 +26,7 @@ knitr::opts_chunk$set(echo = TRUE)
 <tbody>
   <tr>
     <td class="tg-zv4m" style="width:60%"><img src='image.png'></td>
-    <td class="tg-mfl2" style="width:40%"><span style="font-weight:bold"><br></br>**Tapajit Dey**</span> and <span style="font-weight:bold">**Brian Fitzgerald**</span> <br><span style="font-style:italic">*Lero --- The Irish Software Research Center*</span><br></br> We are grateful to <span style="font-weight:bold">**Clare Dillon**</span> and others from <span style="font-style:italic">*InnerSource Commons*</span> for their generous support, testers of the Pilot Survey, and every Respondent of the Survey for participating.<br><br></br></td>
+    <td class="tg-mfl2" style="width:40%"><span style="font-weight:bold"><br></br>**Tapajit Dey**</span> and <span style="font-weight:bold">**Brian Fitzgerald**</span> <br><span style="font-style:italic">*Lero --- The Irish Software Research Center*</span><br></br> We are grateful to <span style="font-weight:bold">the InnerSource Commons Marketing Working Group</span> and <span style="font-style:italic">the Testers of the Pilot Survey</span> for their generous support, and a big THANK YOU! to every Respondent of the Survey for participating.<br><br></br></td>
   </tr>
 </tbody>
 </table>
@@ -84,7 +84,7 @@ development practices within their boundaries, a practice that is known as **Inn
 
 In the past few years, InnerSource is gaining much attention from companies
 around the globe. In 2015, the InnerSource Commons community was founded by
-Danese Cooper from PayPal to help promote the practice across different organizations, and the community is growing ever since, with over 500
+Danese Cooper from PayPal to help promote the practice across different organizations, and the community is growing ever since, with over 800
 members in the InnerSource Commons Slack channel. This community of software
 professionals are experimenting with open source development practices to
 overcome the many barriers and challenges that exist in many software
@@ -101,17 +101,28 @@ The 2020 State of the InnerSource Survey was conducted as a checkpoint to assess
 Since a number of studies (e.g. [Key Factors](https://dl.acm.org/doi/10.1145/2533685), [Adoption Book](https://innersourcecommons.org/resources/books/adoptinginnersource/), [Adoption Tutorial](https://ieeexplore.ieee.org/document/6809709)) already documented the Key Factors for InnerSource success in detail, we focused more on exploring the key motivations for contributors and the *obstacles*. 
 
 # **Survey Result**
-Currently, we only have results from Phase 1 of the Survey. The demographic profiles of the respondents and their organizations are listed in the corresponding tabs under the **Demographics** Menu on the Header of this page. The detailed results for InnerSource Adoption, Success Factors, Obstacles, and our respondents' opinion on the InnerSource commons platform are listed  in the corresponding tabs under the **Detailed Results** Menu on the Header.
+*Currently, we only have results from Phase 1 of the Survey.*
 
-In Summary, most of the responses we got were from Europe and North Americas, predominantly Male, but with many different professional roles across all ages, working at companies of various sizes (2 - 400,000), mostly in Tech companies, but also from Banking & Finance.
+### *Site Organization:*
 
+The demographic profiles of the respondents and their organizations are listed in the corresponding tabs under the **Demographics** Menu on the Header of this page. The detailed results for InnerSource Adoption, Success Factors, Obstacles, and our respondents' opinion on the InnerSource commons platform are listed  in the corresponding tabs under the **Detailed Results** Menu on the Header.
+
+### *A Quick Summary of the Results:*
+
+#### Demographics: 
+Most of the responses we got were from Europe and North Americas, predominantly Male, but with many different professional roles across all ages, working at companies of various sizes (2 - 400,000), mostly in Tech companies, but also from Banking & Finance.
+
+#### InnerSource Adoption:
 Our respondents reported a medium progress/success with InnerSource overall, and noted the main reasons for *adoption* were **Removing Silos & Bottlenecks** and **Knowledge Sharing**, and reported a measurable progress in the latter goal. 
 
+#### Success Factors:
 Creating a sense of belonging by *interacting with others with similar interests* and the *empowerment to fix defects* (The third and fourth levels of [Maslow's hierarchy of needs
-](https://en.wikipedia.org/wiki/Maslow's_hierarchy_of_needs)) were the key motivations for contribution, and people mostly contributed to the projects related to their work and/or the ones with significant value to the organization. 
+](https://en.wikipedia.org/wiki/Maslow's_hierarchy_of_needs)) were the key motivations for contribution, and people mostly contributed to the projects related to their work and/or the ones with significant value to the organization. Most of our respondents noted that the Management at their organization was fairly supportive of InnerSource, and also reported collaborating with colleagues outside of their group.
 
-Time was the biggest constraint for InnerSource contributions, along with misconceptions about InnerSource among the employees and legacy incentive and governance structures that do not value InnerSource contributions as much.
+#### Obstacles:
+The biggest constraint noted by our respondents was lack of time, along with misconceptions about InnerSource among the employees, and legacy incentive and governance structures that do not value InnerSource contributions as much. They also highlighted a need for **ensuring management support, community building, incentivization of InnerSource contributions, and encouraing people to open up their code** for ensuring InnerSource success.
 
+#### InnerSource Commons Platform:
 People mostly find the InnerSource Commons platform useful, and we received a few ideas about further improvement (and the need of further outreach!).
 
 ### **The Good News: People are very much willing to recommend InnerSource to colleagues *who are even outside* their organization, and not a single Negative response on that !!!**
@@ -127,5 +138,7 @@ plot(lk, centered=F, text.size=3.5, plot.percents =F, plot.percent.neutral=F, pl
 ```
 
 # **Methodology**
-We designed an online questionnaire targeting practitioners  of  InnerSource, which we advertised through the InnerSource Commons Slack channel and other social medias like LinkedIn & Twitter. A few responses were cleaned manually to correct spellings, remove unrelated answers, and coining common themes.
+We designed an online questionnaire using Google Forms targeting practitioners  of  InnerSource, which we advertised through the InnerSource Commons Slack channel and other social medias like LinkedIn & Twitter. A few responses were cleaned manually to correct spellings, remove unrelated answers, and coining common themes. The Survey Questions are available [here](https://github.com/tapjdey/InnerSource_Survey_2020/blob/main/_State_of_the_InnerSource_Survey_2020.pdf). The refined data of the Survey responses is available [here](https://github.com/tapjdey/InnerSource_Survey_2020/blob/main/_Survey_Data.csv).
 
+# Plans for the Future
+We'll shortly be launching Phase 2 of the Survey, with a few refinement of the questions, ensuring everyone can access it (people from China can't access Google Forms), and providing translations if needed.
