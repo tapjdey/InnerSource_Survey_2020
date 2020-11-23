@@ -120,7 +120,7 @@ Creating a sense of belonging by *interacting with others with similar interests
 ](https://en.wikipedia.org/wiki/Maslow's_hierarchy_of_needs)) were the key motivations for contribution, and people mostly contributed to the projects related to their work and/or the ones with significant value to the organization. Most of our respondents noted that the Management at their organization was fairly supportive of InnerSource, and also reported collaborating with colleagues outside of their group.
 
 #### Obstacles:
-The biggest constraint noted by our respondents was lack of time, along with misconceptions about InnerSource among the employees, and legacy incentive and governance structures that do not value InnerSource contributions as much. They also highlighted a need for **ensuring management support, community building, incentivization of InnerSource contributions, and encouraing people to open up their code** for ensuring InnerSource success.
+The biggest constraint noted by our respondents was lack of time, along with misconceptions about InnerSource among the employees, and legacy incentive and governance structures that do not value InnerSource contributions as much. They also highlighted a need for **ensuring management support, community building, incentivization of InnerSource contributions, and encouraging people to open up their code** for ensuring InnerSource success.
 
 #### InnerSource Commons Platform:
 People mostly find the InnerSource Commons platform useful, and we received a few ideas about further improvement (and the need of further outreach!).
