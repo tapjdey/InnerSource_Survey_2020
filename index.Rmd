@@ -26,7 +26,7 @@ knitr::opts_chunk$set(echo = TRUE)
 <tbody>
   <tr>
     <td class="tg-zv4m" style="width:60%"><img src='image.png'></td>
-    <td class="tg-mfl2" style="width:40%"><span style="font-weight:bold"><br></br>**Tapajit Dey**</span> and <span style="font-weight:bold">**Brian Fitzgerald**</span> <br><span style="font-style:italic">*Lero --- The Irish Software Research Center*</span><br></br> We are grateful to <span style="font-weight:bold">the InnerSource Commons Marketing Working Group</span> and <span style="font-style:italic">the Testers of the Pilot Survey</span> for their generous support, and a big THANK YOU! to every Respondent of the Survey for participating.<br><br></br></td>
+    <td class="tg-mfl2" style="width:40%"><span style="font-weight:bold"><br></br>**Tapajit Dey**</span> and <span style="font-weight:bold">**Brian Fitzgerald**</span> <br><span style="font-style:italic">*Lero --- The Irish Software Research Center*</span><br></br> We are grateful to the <span style="font-weight:bold"> [InnerSource Commons](https://innersourcecommons.org/) Marketing Working Group</span> and <span style="font-style:italic">the Testers of the Pilot Survey</span> for their generous support, and a big THANK YOU! to every Respondent of the Survey for participating.<br><br></br></td>
   </tr>
 </tbody>
 </table>
